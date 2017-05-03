@@ -36,7 +36,7 @@ jQuery(document).ready(function($){
                     "posts_per_page" : posts_per_page
                 },
                 success: function(data){
-                    $('#result2').html(data);sadf
+                    $('#result2').html(data);
                 }
             });
         }show_reviews('date', 'DESC', 3);
