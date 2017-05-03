@@ -38,23 +38,34 @@ jQuery(document).ready(function($){
                 success: function(data){
                     $('#result2').html(data);
                 }
-            });
-        }show_reviews('date', 'DESC', 3);
+            });        }
                 
-        var filter = 'date';
+        var orderby = 'date';
+        var order = 'DESC'
         var posts_per_page = 3;
 
-        $('#show_more_reviews_btn').click(function(){
-            var posts_per_page = -1;   
-            $('#result2').attr('data-reviews-to-show', posts_per_page);                 
-            if(filter == 'date') show_reviews('date', 'DESC', $('#result2').attr('data-reviews-to-show')); 
-            else show_reviews('meta_value', filter, $('#result2').attr('data-reviews-to-show'));            
-        }); 
+        // SHOW INITIAL REVIEWS LOOP
+        show_reviews(orderby, order, posts_per_page);
 
-        $('.reviews-filter li a').click(function(){
-            var filter = $(this).attr('data-filter');
-            if(filter == 'date') show_reviews('date', 'DESC', $('#result2').attr('data-reviews-to-show')); 
-            else show_reviews('meta_value', filter, $('#result2').attr('data-reviews-to-show'));                       
+        // SHOW MORE OR LESS REVIEWS
+        $('#show_more_reviews_btn').click(function(){
+            if(posts_per_page == 3) {
+               posts_per_page = -1;
+               $(this).html('Show Less Reviews <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>'); 
+            } 
+            else {
+               posts_per_page = 3; 
+               $(this).html('Show More Reviews <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>'); 
+            }
+            show_reviews(orderby, order, posts_per_page);            
+        });
+        
+        // FILTER REVIEWS 
+        $('.reviews-filter li a').click(function(){            
+            order = $(this).attr('data-filter');
+            if (order == 'date') orderby = 'date';
+            else orderby = 'meta_value';
+            show_reviews(orderby, order, posts_per_page);
         });
                        
         $(document).ajaxComplete(function(event,xhr,settings){
@@ -69,7 +80,13 @@ jQuery(document).ready(function($){
             }
             if(settings.role === "show_reviews") {
                 $('.p1').text($('#reviews_list li').length);
-                $('.p2').text($('#number_of_reviews').attr('data-nor'));                                           
+                $('.p2').text($('#number_of_reviews').attr('data-nor'));   
+                // Aniamte height of the review container when it changes
+                var $mydiv = $('#result2');
+                $mydiv.css('height', $mydiv.height() );
+                $mydiv.wrapInner('<div/>');
+                var newheight = $('div:first',$mydiv).height();
+                $mydiv.animate( {height: newheight} );                                        
             }
         });
 
